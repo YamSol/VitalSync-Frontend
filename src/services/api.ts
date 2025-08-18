@@ -3,7 +3,7 @@ import type { ApiResponse } from '../types';
 
 // Configure axios base instance
 const api = axios.create({
-  baseURL: process.env.VITE_API_URL || 'http://localhost:3001', // Alterar para URL do backend
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001', // URL do backend
   timeout: 10000,
 });
 
