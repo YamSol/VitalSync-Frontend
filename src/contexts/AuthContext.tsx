@@ -40,8 +40,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await authService.login(credentials);
-      setUser(response.user);
+      
+      // Only set user if response is valid and has user data
+      if (response && response.user) {
+        setUser(response.user);
+      } else {
+        throw new Error('Login failed - invalid response');
+      }
     } catch (error) {
+      // Don't save anything if login fails
+      setUser(null);
       throw error;
     } finally {
       setIsLoading(false);
