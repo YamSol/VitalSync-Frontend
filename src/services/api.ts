@@ -1,17 +1,7 @@
 import axios from 'axios';
-import type { ApiResponse } from '../types';
 
 // Cookie utility to get cookie value
-const getCookie = (name: string): string | null => {
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-  }
-  return null;
-};
+
 
 // Cookie utility to delete cookie
 const deleteCookie = (name: string) => {
@@ -25,13 +15,12 @@ const api = axios.create({
   withCredentials: true, // Enable cookies
 });
 
-// Request interceptor to add authorization token
+// Request interceptor
+// Não precisamos adicionar o token manualmente, pois o navegador 
+// envia automaticamente o cookie HTTP-only para o domínio correto
 api.interceptors.request.use(
   (config) => {
-    const token = getCookie('vitalsync_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Não precisamos fazer nada aqui, o navegador cuida do cookie JWT
     return config;
   },
   (error) => {

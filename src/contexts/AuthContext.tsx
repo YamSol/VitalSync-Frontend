@@ -22,15 +22,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const initializeAuth = () => {
-      const currentUser = authService.getCurrentUser();
-      const token = authService.getToken();
-      
-      if (currentUser && token) {
-        setUser(currentUser);
+    const initializeAuth = async () => {
+      try {
+        // Primeiro tenta obter o usuário do cookie
+        const currentUser = authService.getCurrentUser();
+        
+        if (currentUser) {
+          setUser(currentUser);
+        }
+        
+        // Depois verifica no servidor se o cookie de autenticação é válido
+        const serverUser = await authService.checkAuthStatus();
+        if (serverUser) {
+          // Se o servidor retornar o usuário, atualize o estado
+          setUser(serverUser);
+        } else if (currentUser) {
+          // Se temos usuário no cookie mas o servidor não reconhece, logout
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        // Em caso de erro, não deixa o usuário autenticado
+        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
     };
 
     initializeAuth();

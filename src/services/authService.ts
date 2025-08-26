@@ -26,19 +26,24 @@ const deleteCookie = (name: string) => {
 export const authService = {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      const response = await api.post<LoginResponse>('/auth/login', credentials);
+      const response = await api.post<{success: boolean; message: string; data: {user: User}}>('/auth/login', credentials);
       
       // Validate response
-      if (!response.data || !response.data.user || !response.data.token) {
+      if (!response.data || response.data.success !== true || !response.data.data?.user) {
         throw new Error('Invalid login response');
       }
       
-      // Store token and user data in cookies
-      setCookie('vitalsync_token', response.data.token, 7);
-      setCookie('vitalsync_user', JSON.stringify(response.data.user), 7);
+      // No need to set token cookie - backend handles it as HTTP-only
+      // Just store user data in cookie for UI purposes
+      setCookie('vitalsync_user', JSON.stringify(response.data.data.user), 7);
       
-      return response.data;
+      // Return LoginResponse format expected by the app
+      return {
+        user: response.data.data.user,
+        token: 'http-only' // placeholder, not actually used
+      };
     } catch (error: any) {
+      console.error('Login error:', error);
       throw new Error(error.response?.data?.message || 'Login failed');
     }
   },
@@ -70,12 +75,30 @@ export const authService = {
   },
 
   getToken(): string | null {
-    return getCookie('vitalsync_token');
+    // O token agora é gerenciado pelo navegador como HTTP-only cookie
+    // Não podemos acessá-lo diretamente, mas podemos verificar se o usuário está autenticado
+    return 'http-only'; // placeholder
   },
 
   isAuthenticated(): boolean {
-    const token = this.getToken();
+    // Como o token é HTTP-only, verificamos apenas se temos dados do usuário
     const user = this.getCurrentUser();
-    return !!(token && user);
+    return !!user;
+  },
+  
+  // Verifica o status da autenticação no servidor
+  async checkAuthStatus(): Promise<User | null> {
+    try {
+      const response = await api.get('/auth/check');
+      if (response.data?.success && response.data?.data?.isAuthenticated && response.data?.data?.user) {
+        // Atualiza o cookie do usuário com os dados mais recentes
+        setCookie('vitalsync_user', JSON.stringify(response.data.data.user), 7);
+        return response.data.data.user as User;
+      }
+      return null;
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      return null;
+    }
   }
 };
