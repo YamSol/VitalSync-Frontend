@@ -26,6 +26,7 @@ export const patientService = {
       formData.append('name', patientData.name);
       formData.append('age', patientData.age.toString());
       formData.append('condition', patientData.condition);
+      formData.append('transmitterId', patientData.transmitterId);
       
       if (patientData.photo) {
         formData.append('photo', patientData.photo);

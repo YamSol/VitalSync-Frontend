@@ -22,7 +22,11 @@ const patientSchema = yup.object({
   condition: yup
     .string()
     .required('Condição é obrigatória')
-    .min(2, 'Condição deve ter pelo menos 2 caracteres')
+    .min(2, 'Condição deve ter pelo menos 2 caracteres'),
+  transmitterId: yup
+    .string()
+    .required('Transmitter ID é obrigatório')
+    .min(2, 'Transmitter ID deve ter pelo menos 2 caracteres'),
 });
 
 export const RegisterPatientPage: React.FC = () => {
@@ -198,6 +202,24 @@ export const RegisterPatientPage: React.FC = () => {
                 />
                 {errors.condition && (
                   <p className="mt-2 text-sm text-red-600">{errors.condition.message}</p>
+                )}
+              </div>
+
+              {/* Transmitter ID field */}
+              <div>
+                <label htmlFor="transmitterId" className="block text-sm font-medium text-gray-700 mb-2">
+                  Transmitter ID *
+                </label>
+                <textarea
+                  {...register('transmitterId')}
+                  rows={3}
+                  className={`input-field ${
+                    errors.transmitterId ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''
+                  }`}
+                  placeholder="Digite o Transmitter ID do paciente"
+                />
+                {errors.transmitterId && (
+                  <p className="mt-2 text-sm text-red-600">{errors.transmitterId.message}</p>
                 )}
               </div>
 

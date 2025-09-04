@@ -1,10 +1,6 @@
 export interface VitalSigns {
   heartRate: number; // BPM
   oxygenSaturation: number; // %
-  bloodPressure: {
-    systolic: number;
-    diastolic: number;
-  };
   temperature: number; // Celsius
 }
 
@@ -25,6 +21,7 @@ export interface PatientFormData {
   name: string;
   age: number;
   condition: string;
+  transmitterId: string;
   photo?: File;
 }
 
