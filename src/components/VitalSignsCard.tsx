@@ -54,7 +54,7 @@ export const VitalSignsCard: React.FC<VitalSignsCardProps> = ({
 
         <div className="text-center">
           <div className={`text-2xl font-bold ${getOxygenColor(vitalSigns.oxygenSaturation)}`}>
-            {formatValue(vitalSigns.oxygenSaturation)}%
+            {isAverageData ? formatValue(vitalSigns.oxygenSaturation) : vitalSigns.oxygenSaturation.toFixed(1)}%
           </div>
           {showLabels && <div className="text-sm text-gray-500">SpO₂</div>}
         </div>
