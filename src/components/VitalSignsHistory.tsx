@@ -44,7 +44,7 @@ export const VitalSignsHistoryComponent: React.FC<VitalSignsHistoryProps> = ({ h
     <div className="w-1/2">
       <h3 className="text-lg font-semibold mb-4">Histórico de Sinais Vitais</h3>
       
-      <div className="max-h-[60vh] overflow-y-auto space-y-4 pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+      <div className="max-h-[75vh] overflow-y-auto space-y-4 pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         {sortedDates.map(dateKey => {
           const dateTransmissions = groupedByDate[dateKey].sort((a, b) => 
             new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()

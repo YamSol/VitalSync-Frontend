@@ -22,7 +22,7 @@ export const VitalSignsCard: React.FC<VitalSignsCardProps> = ({
 
   const getOxygenColor = (o2: number) => {
     if (o2 < 95) return 'text-medical-red';
-    if (o2 < 98) return 'text-medical-orange';
+    if (o2 < 96) return 'text-medical-orange';
     return 'text-medical-green';
   };
 
