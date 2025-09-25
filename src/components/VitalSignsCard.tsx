@@ -12,6 +12,9 @@ export const VitalSignsCard: React.FC<VitalSignsCardProps> = ({
   title = 'Sinais Vitais',
   showLabels = true 
 }) => {
+  // Check if this is showing averages based on title
+  const isAverageData = title?.toLowerCase().includes('média');
+  
   const getHeartRateColor = (hr: number) => {
     if (hr < 60 || hr > 100) return 'text-medical-red';
     return 'text-medical-green';
@@ -29,6 +32,14 @@ export const VitalSignsCard: React.FC<VitalSignsCardProps> = ({
     return 'text-medical-green';
   };
 
+  // Format numbers based on whether it's average data or not
+  const formatValue = (value: number, isInteger = false) => {
+    if (isAverageData) {
+      return isInteger ? Math.round(value) : Number(value.toFixed(3));
+    }
+    return isInteger ? Math.round(value) : value;
+  };
+
   return (
     <div className="card">
       {showLabels && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
@@ -36,14 +47,14 @@ export const VitalSignsCard: React.FC<VitalSignsCardProps> = ({
       <div className="grid grid-cols-2 gap-4">
         <div className="text-center">
           <div className={`text-2xl font-bold ${getHeartRateColor(vitalSigns.heartRate)}`}>
-            {vitalSigns.heartRate}
+            {formatValue(vitalSigns.heartRate, true)}
           </div>
           {showLabels && <div className="text-sm text-gray-500">BPM</div>}
         </div>
 
         <div className="text-center">
           <div className={`text-2xl font-bold ${getOxygenColor(vitalSigns.oxygenSaturation)}`}>
-            {vitalSigns.oxygenSaturation}%
+            {formatValue(vitalSigns.oxygenSaturation)}%
           </div>
           {showLabels && <div className="text-sm text-gray-500">SpO₂</div>}
         </div>
@@ -51,7 +62,7 @@ export const VitalSignsCard: React.FC<VitalSignsCardProps> = ({
 
         <div className="text-center">
           <div className={`text-2xl font-bold ${getTemperatureColor(vitalSigns.temperature)}`}>
-            {vitalSigns.temperature.toFixed(1)}°C
+            {isAverageData ? formatValue(vitalSigns.temperature) : vitalSigns.temperature.toFixed(1)}°C
           </div>
           {showLabels && <div className="text-sm text-gray-500">Temp</div>}
         </div>
