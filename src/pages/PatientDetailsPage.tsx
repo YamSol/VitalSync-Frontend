@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Activity } from 'lucide-react';
 import { patientService } from '../services';
 import { useToast } from '../hooks/useToast';
-import { Header, LoadingSpinner, Toast, VitalSignsCard } from '../components';
-import type { Patient, PatientStats } from '../types';
+import { Header, LoadingSpinner, Toast, VitalSignsCard, VitalSignsHistoryComponent, VitalSignsCharts } from '../components';
+import type { Patient, PatientStats, VitalSignsHistory } from '../types';
 
 export const PatientDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +13,7 @@ export const PatientDetailsPage: React.FC = () => {
   
   const [patient, setPatient] = useState<Patient | null>(null);
   const [stats, setStats] = useState<PatientStats | null>(null);
+  const [history, setHistory] = useState<VitalSignsHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'current' | 'averages' | 'history'>('current');
 
@@ -26,13 +27,15 @@ export const PatientDetailsPage: React.FC = () => {
     
     try {
       setLoading(true);
-      const [patientData, statsData] = await Promise.all([
+      const [patientData, statsData, historyData] = await Promise.all([
         patientService.getPatient(id),
-        patientService.getPatientStats(id)
+        patientService.getPatientStats(id),
+        patientService.getPatientHistory(id)
       ]);
       
       setPatient(patientData);
       setStats(statsData);
+      setHistory(historyData);
     } catch (error: any) {
       showError(error.message || 'Erro ao carregar dados do paciente');
     } finally {
@@ -180,16 +183,16 @@ export const PatientDetailsPage: React.FC = () => {
           </div>
 
           {/* Tab content */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {activeTab === 'current' && (
-              <VitalSignsCard
-                vitalSigns={patient.currentVitalSigns}
-                title="Sinais Vitais Atuais"
-              />
+          <div className="space-y-6">
+            {activeTab === 'current' && history && (
+              <div className="flex space-x-6">
+                <VitalSignsHistoryComponent history={history} />
+                <VitalSignsCharts history={history} />
+              </div>
             )}
             
             {activeTab === 'averages' && stats && (
-              <>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <VitalSignsCard
                   vitalSigns={stats.averages.last24h}
                   title="Média das Últimas 24h"
@@ -204,24 +207,11 @@ export const PatientDetailsPage: React.FC = () => {
                   vitalSigns={stats.averages.lastMonth}
                   title="Média do Último Mês"
                 />
-              </>
+              </div>
             )}
           </div>
 
-          {/* Additional info card */}
-          <div className="card mt-6">
-            <h3 className="text-lg font-semibold mb-4">Informações Adicionais</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="font-medium text-gray-700">Status:</span>
-                <span className="ml-2 text-green-600">Monitoramento Ativo</span>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700">Frequência de Transmissão:</span>
-                <span className="ml-2 text-gray-900">A cada 5 minutos</span>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </main>
     </div>
