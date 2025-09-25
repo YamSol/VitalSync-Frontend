@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Activity } from 'lucide-react';
 import { patientService } from '../services';
 import { useToast } from '../hooks/useToast';
-import { Header, LoadingSpinner, Toast, VitalSignsCard, VitalSignsHistoryComponent } from '../components';
+import { Header, LoadingSpinner, Toast, VitalSignsCard, VitalSignsHistoryComponent, VitalSignsCharts } from '../components';
 import type { Patient, PatientStats, VitalSignsHistory } from '../types';
 
 export const PatientDetailsPage: React.FC = () => {
@@ -185,7 +185,10 @@ export const PatientDetailsPage: React.FC = () => {
           {/* Tab content */}
           <div className="space-y-6">
             {activeTab === 'current' && history && (
-              <VitalSignsHistoryComponent history={history} />
+              <div className="flex space-x-6">
+                <VitalSignsHistoryComponent history={history} />
+                <VitalSignsCharts history={history} />
+              </div>
             )}
             
             {activeTab === 'averages' && stats && (
