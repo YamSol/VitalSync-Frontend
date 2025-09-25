@@ -208,20 +208,7 @@ export const PatientDetailsPage: React.FC = () => {
             )}
           </div>
 
-          {/* Additional info card */}
-          <div className="card mt-6">
-            <h3 className="text-lg font-semibold mb-4">Informações Adicionais</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="font-medium text-gray-700">Status:</span>
-                <span className="ml-2 text-green-600">Monitoramento Ativo</span>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700">Frequência de Transmissão:</span>
-                <span className="ml-2 text-gray-900">A cada 5 minutos</span>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </main>
     </div>
